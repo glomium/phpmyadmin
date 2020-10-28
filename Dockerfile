@@ -1,33 +1,25 @@
-FROM alpine:3.11.3
+ARG UBUNTU=rolling
+FROM ubuntu:$UBUNTU
 MAINTAINER Sebastian Braun <sebastian.braun@fh-aachen.de>
-# base alpine template
 
-# Download requirements to serve php
-RUN apk add --no-cache \
+ENV DEBIAN_FRONTEND noninteractive
+ENV LANG en_US.utf8
+
+RUN apt-get update && apt-get install --no-install-recommends -y -q \
     apache2 \
-    mysql-client \
-    php7-apache2 \
-    php7-ctype \
-    php7-curl \
-    php7-gd \
-    php7-json \
-    php7-mysqli \
-    php7-mbstring \
-    php7-openssl \
-    php7-zip \
-    rsync
-
-# download phpmyadmin
-RUN apk add --no-cache \
+    ca-certificates \
     phpmyadmin \
-    php7-session \
- && rm /etc/apache2/conf.d/phpmyadmin.conf
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/
 
 # Copy configuration files
-COPY config.inc.php /etc/phpmyadmin/config.inc.php
+COPY entrypoint.sh /entrypoint.sh
+COPY phpmyadmin.conf /etc/dbconfig-common/phpmyadmin.conf
 
-# Setup Webserver
-COPY httpd.conf /etc/apache2/httpd.conf
+RUN rm /etc/apache2/sites-enabled/* \
+ && ln -s /etc/phpmyadmin/apache.conf /etc/apache2/sites-enabled/phpmyadmin.conf \
+ && chmod +x /entrypoint.sh \
+ && dpkg-reconfigure phpmyadmin
 
-EXPOSE 8080/tcp
-ENTRYPOINT ["httpd", "-DFOREGROUND"]
+EXPOSE 80/tcp
+ENTRYPOINT ["/entrypoint.sh"]

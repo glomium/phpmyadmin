@@ -1,3 +1,3 @@
 # phpmyadmin
 
-PhpMyAdmin installation on alpine linux
+PhpMyAdmin installation on ubunut
