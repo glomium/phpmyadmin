@@ -1,5 +1,5 @@
 # vim:set ft=dockerfile:
-ARG UBUNTU=rolling
+ARG UBUNTU=21.04
 FROM ubuntu:$UBUNTU
 MAINTAINER Sebastian Braun <sebastian.braun@fh-aachen.de>
 
