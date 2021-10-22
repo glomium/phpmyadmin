@@ -1,6 +1,6 @@
 # vim:set ft=dockerfile:
-ARG UBUNTU=21.04
-FROM ubuntu:$UBUNTU
+ARG BASEIMAGE=ubuntu:21.04
+FROM $BASEIMAGE
 MAINTAINER Sebastian Braun <sebastian.braun@fh-aachen.de>
 
 ENV DEBIAN_FRONTEND noninteractive
