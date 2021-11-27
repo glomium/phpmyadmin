@@ -18,16 +18,18 @@ RUN apt-get update && apt-get install --no-install-recommends -y -q \
     php-mysql \
     php-xml \
  && apt-get clean \
- && rm -rf /var/lib/apt/lists/
+ && rm -rf /var/lib/apt/lists/*
 
-RUN lighty-enable-mod fastcgi && lighty-enable-mod fastcgi-php
+RUN lighty-enable-mod fastcgi \
+ && lighty-enable-mod fastcgi-php \
+ && sed -i 's|server.errorlog  |# server.errorlog|' /etc/lighttpd/lighttpd.conf
 
 ENTRYPOINT ["lighttpd", "-D"]
 
 RUN apt-get update && apt-get install --no-install-recommends -y -q \
     phpmyadmin \
  && apt-get clean \
- && rm -rf /var/lib/apt/lists/
+ && rm -rf /var/lib/apt/lists/*
 
 # Copy configuration files
 COPY phpmyadmin.conf /etc/dbconfig-common/phpmyadmin.conf
