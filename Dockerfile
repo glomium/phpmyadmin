@@ -4,7 +4,7 @@ FROM $BASEIMAGE
 MAINTAINER Sebastian Braun <sebastian.braun@fh-aachen.de>
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV LANG en_US.UTF-8
+ENV LC_ALL C
 
 # install lighttpd with php
 RUN apt-get update && apt-get install --no-install-recommends -y -q \
@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y -q \
     default-mysql-client \
     lighttpd \
     php-cgi \
+    php-fpm \
     php-json \
     php-mbstring \
     php-mysql \
@@ -21,9 +22,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y -q \
 
 RUN lighty-enable-mod fastcgi && lighty-enable-mod fastcgi-php
 
-EXPOSE 80/tcp
-ENTRYPOINT ["lighttpd" "-D"]
-CMD ["-f", "/etc/lighttpd/lighttpd.conf"]
+ENTRYPOINT ["lighttpd", "-D"]
 
 RUN apt-get update && apt-get install --no-install-recommends -y -q \
     phpmyadmin \
@@ -35,3 +34,6 @@ COPY phpmyadmin.conf /etc/dbconfig-common/phpmyadmin.conf
 
 RUN dpkg-reconfigure phpmyadmin \
  && ln -s /etc/phpmyadmin/lighttpd.conf /etc/lighttpd/conf-enabled/phpmyadmin.conf
+
+EXPOSE 80/tcp
+CMD ["-f", "/etc/lighttpd/lighttpd.conf"]
